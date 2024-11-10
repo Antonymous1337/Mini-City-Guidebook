@@ -23,6 +23,25 @@ struct DetailView: View {
                         .bold()
                     Text(attraction.longDescription)
                         .multilineTextAlignment(.leading)
+                    
+                    if let url = URL(string: "maps://?q=\(cleanName(name:attraction.name))&sll=\(cleanCoords(coords:attraction.latLong))&z=1&t=s") {
+                        
+                        if UIApplication.shared.canOpenURL(url) {
+                            
+                            Button {
+                                UIApplication.shared.open(url)
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .foregroundStyle(.blue)
+                                        .frame(height: 40)
+                                    Text("Get Directions")
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                        }
+                        
+                    }
                 }
                 .padding(.bottom, 20)
             }
@@ -31,6 +50,15 @@ struct DetailView: View {
         }
         .ignoresSafeArea()
     }
+    
+    func cleanName(name: String) -> String {
+        return name.replacingOccurrences(of: " ", with: "+").folding(options: .diacriticInsensitive, locale: .current)
+    }
+    
+    func cleanCoords(coords: String) -> String {
+        return coords.replacingOccurrences(of: " ", with: "")
+    }
+    
 }
 
 #Preview {
